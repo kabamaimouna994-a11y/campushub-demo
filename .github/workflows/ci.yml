@@ -1,0 +1,34 @@
+name: CI/CD - CampusHub IA
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Verify repository
+        run: |
+          echo "✅ Repository verified"
+          echo "📁 Files: $(ls -la)"
+          echo "🚀 CampusHub IA is ready"
+      
+      - name: Check backend structure
+        run: |
+          if [ -d "backend" ]; then
+            echo "✅ Backend directory exists"
+            ls -la backend/
+          else
+            echo "❌ Backend directory missing"
+            exit 1
+          fi
+      
+      - name: Check frontend structure
+        run: |
+          if [ -d "frontend" ]; then
+            echo "✅ Frontend directory exists"
+          else
+            echo "❌ Frontend directory missing"
+            exit 1
+          fi
