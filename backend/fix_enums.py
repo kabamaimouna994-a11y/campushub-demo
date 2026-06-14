@@ -11,10 +11,13 @@ from core.database import engine
 
 
 async def fix():
-    async with engine.begin() as conn:
+    async with engine.connect() as conn:
+        conn = await conn.execution_options(isolation_level="AUTOCOMMIT")
         await conn.execute(text("ALTER TYPE userrole ADD VALUE IF NOT EXISTS 'MENTOR'"))
-        await conn.execute(text("ALTER TYPE skillcategory ADD VALUE IF NOT EXISTS 'OTHER'"))
-    print("OK : enums userrole.MENTOR et skillcategory.OTHER ajoutés (ou déjà présents).")
+        # Toutes les valeurs possibles de l'enum SkillCategory (models/skill.py)
+        for value in ["TECH", "DATA", "DESIGN", "BUSINESS", "LANGUAGE", "SOFT", "OTHER"]:
+            await conn.execute(text(f"ALTER TYPE skillcategory ADD VALUE IF NOT EXISTS '{value}'"))
+    print("OK : enums userrole et skillcategory mis à jour (valeurs ajoutées si manquantes).")
 
 
 if __name__ == "__main__":
